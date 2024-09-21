@@ -82,7 +82,64 @@ function togglePictureInPicture() {
   }
 }
 
-// ... (rest of the code remains the same)
+function createPiPControls() {
+  if (!pipWindow) return;
 
-// Log when the content script is loaded
+  controlsContainer = document.createElement('div');
+  controlsContainer.style.cssText = `
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 5px;
+    display: none;
+    z-index: 9999;
+  `;
+
+  const playPauseBtn = createButton('Play/Pause', togglePlayPause);
+  const skipBackBtn = createButton('-10s', () => video.currentTime -= 10);
+  const skipForwardBtn = createButton('+30s', () => video.currentTime += 30);
+  const exitBtn = createButton('Exit', exitPictureInPicture);
+  const popBackBtn = createButton('Pop Back', popBackToTab);
+
+  controlsContainer.append(playPauseBtn, skipBackBtn, skipForwardBtn, exitBtn, popBackBtn);
+
+  document.body.appendChild(controlsContainer);
+
+  pipWindow.addEventListener('mouseover', () => controlsContainer.style.display = 'block');
+  pipWindow.addEventListener('mouseout', () => controlsContainer.style.display = 'none');
+}
+
+function createButton(text, onClick) {
+  const button = document.createElement('button');
+  button.textContent = text;
+  button.addEventListener('click', onClick);
+  return button;
+}
+
+function togglePlayPause() {
+  if (video) {
+    if (video.paused) {
+      video.play();
+    } else {
+      video.pause();
+    }
+  }
+}
+
+function popBackToTab() {
+  exitPictureInPicture();
+  chrome.runtime.sendMessage({ action: "focusOriginalTab" });
+}
+
+// Clean up when leaving Picture-in-Picture mode
+document.addEventListener('leavepictureinpicture', () => {
+  if (controlsContainer) {
+    controlsContainer.remove();
+    controlsContainer = null;
+  }
+});
+
 console.log("Picture-in-Picture content script loaded");

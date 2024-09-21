@@ -3,13 +3,12 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "enterPiP") {
-    chrome.tabs.sendMessage(sender.tab.id, { action: "enterPiP" });
-  } else if (request.action === "exitPiP") {
-    chrome.tabs.sendMessage(sender.tab.id, { action: "exitPiP" });
-  } else if (request.action === "togglePiP") {
-    chrome.tabs.sendMessage(sender.tab.id, { action: "checkForVideo" });
+  if (request.action === "enterPiP" || request.action === "exitPiP" || request.action === "togglePiP") {
+    chrome.tabs.sendMessage(sender.tab.id, request);
   } else if (request.action === "focusOriginalTab") {
-    chrome.tabs.update(sender.tab.id, {active: true});
+    chrome.tabs.update(sender.tab.id, { active: true });
   }
 });
+
+// Log when the background script is loaded
+console.log("Picture-in-Picture background script loaded");
