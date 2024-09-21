@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Advanced Picture-in-Picture",
+  "name": "Advanced Picture-n-Picture",
   "version": "1.0",
   "description": "A Picture-in-Picture extension with advanced features",
   "permissions": [
